@@ -1,0 +1,30 @@
+name: Uvicorn App Start Test
+run-name: ${{ gitea.actor }} testet den Start einer Uvicorn App 🚀
+on: [push]
+
+jobs:
+  Test-Uvicorn-App:
+    runs-on: ubuntu-latest
+    steps:
+      - name: 📥 Repository auschecken
+        uses: actions/checkout@v4
+
+      - name: 🐍 Python einrichten
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+
+      - name: 📦 Abhängigkeiten installieren
+        run: |
+          python -m pip install --upgrade pip
+          pip install uvicorn fastapi
+
+      - name: 🧪 App-Start testen
+        run: |
+          # Beispiel-Annahme: Die App liegt in app/main.py und enthält eine FastAPI-Instanz namens "app"
+          uvicorn app.main:app --host 127.0.0.1 --port 8000 --log-level warning &
+          sleep 5
+          curl -f http://127.0.0.1:8000 || (echo "❌ App ist nicht erreichbar" && exit 1)
+
+      - name: ✅ Alles lief erfolgreich
+        run: echo "🎉 Uvicorn App wurde erfolgreich gestartet und war erreichbar."
